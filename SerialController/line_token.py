@@ -8,7 +8,7 @@ import cv2
 import linenotify as ln
 
 
-def notify(key: str, message: str, attachment: cv2.Mat | None=None, logger: Logger | None=None):
+def notify(key: str, message: str, attachment: cv2.Mat | None = None, logger: Logger | None = None):
     """
     keyを指定して送信する。
 
@@ -20,13 +20,13 @@ def notify(key: str, message: str, attachment: cv2.Mat | None=None, logger: Logg
     """
     try:
         token = load_tokens(logger=logger)[key]
-    
+
     except:
         print('token名が間違っています')
         if logger is not None:
             logger.error('Using the wrong token')
         return
-    
+
     a = attachment is None
     try:
         service = ln.Service(token)
@@ -37,10 +37,11 @@ def notify(key: str, message: str, attachment: cv2.Mat | None=None, logger: Logg
         if logger is not None:
             logger.error(f"Failed to send {'' if a else 'image with '}text")
         return
-    
+
     print(f"[LINE]テキスト{'' if a else 'と画像'}を送信しました。")
     if logger is not None:
         logger.info(f"Send {'' if a else 'image with '}text")
+
 
 def _get_encoding(filename):
     """
