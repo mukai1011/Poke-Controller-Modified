@@ -15,7 +15,7 @@ def _get_encoding(filename):
         return 'utf-8-sig' if f.readline()[0] == '\ufeff' else 'utf-8'
 
 
-def get_tokens(filename: str = path.join(path.dirname(__file__), "line_token.ini"), logger: Logger | None = None):
+def load_tokens(filename: str = path.join(path.dirname(__file__), "line_token.ini"), logger: Logger | None = None):
     """
     トークンを記載したファイルを読み込む。
 
@@ -108,15 +108,15 @@ def get_rate_limit(tokens: dict[str, str], logger: Logger | None = None):
         print(f"For \"{key}\"")
 
         if isinstance(status, Exception):
-            print(f"\t{str(status)}")
+            print(f"  {str(status)}")
             if logger is not None:
                 logger.warning(f"{key}: {str(status)}")
         else:
-            print(f"\tX-RateLimit-Limit: {status.limit}")
-            print(f"\tX-RateLimit-ImageLimit: {status.image_limit}")
-            print(f"\tX-RateLimit-Remaining: {status.remaining}")
-            print(f"\tX-RateLimit-ImageRemaining: {status.image_remaining}")
-            print(f"\tX-RateLimit-Reset: {status.reset}")
+            print(f"  X-RateLimit-Limit: {status.limit}")
+            print(f"  X-RateLimit-ImageLimit: {status.image_limit}")
+            print(f"  X-RateLimit-Remaining: {status.remaining}")
+            print(f"  X-RateLimit-ImageRemaining: {status.image_remaining}")
+            print(f"  X-RateLimit-Reset: {status.reset}")
 
             if logger is not None:
                 logger.info(f"{key}: LINE API - Limit: {status.limit}")
@@ -132,12 +132,6 @@ def get_rate_limit(tokens: dict[str, str], logger: Logger | None = None):
 
 if __name__ == "__main__":
 
-    logger = getLogger(__name__)
-    logger.addHandler(NullHandler())
-    logger.setLevel(DEBUG)
-    logger.propagate = True
-
-    tokens = get_tokens(logger=logger)
-    
-    print(check_tokens(tokens, logger) + "\n")
-    get_rate_limit(tokens, logger)
+    tokens = load_tokens()
+    print(check_tokens(tokens) + "\n")
+    get_rate_limit(tokens)

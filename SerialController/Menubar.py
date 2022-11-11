@@ -2,9 +2,10 @@ import cv2
 import tkinter as tk
 
 from KeyConfig import PokeKeycon
-from LineNotify import Line_Notify
 from get_pokestatistics import GetFromHomeGUI
 from logging import getLogger, DEBUG, NullHandler
+
+from line_token import check_tokens, get_rate_limit, load_tokens
 
 
 class PokeController_Menubar(tk.Menu):
@@ -24,7 +25,6 @@ class PokeController_Menubar(tk.Menu):
         self.camera = self.master.camera
         self.poke_treeview = None
         self.key_config = None
-        self.line = None
 
         tk.Menu.__init__(self, self.root, **kw)
         self.menu = tk.Menu(self, tearoff='false')
@@ -69,10 +69,9 @@ class PokeController_Menubar(tk.Menu):
 
     def LineTokenSetting(self):
         self._logger.debug("Show line API")
-        if self.line is None:
-            self.line = Line_Notify(self.camera)
-        print(self.line)
-        self.line.getRateLimit()
+        tokens = load_tokens(logger=self._logger)
+        print(check_tokens(tokens, self._logger))
+        get_rate_limit(tokens, self._logger)
         # LINE.send_text_n_image("CAPTURE")
 
     def OpenKeyConfig(self):

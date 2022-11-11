@@ -13,10 +13,11 @@ import tkinter as tk
 import tkinter.ttk as ttk
 
 import Settings
-from LineNotify import Line_Notify
 from . import CommandBase
 from .Keys import Button, Direction, KeyPress
+from line_token import load_tokens
 
+import linenotify as ln
 import numpy as np
 
 
@@ -33,7 +34,6 @@ class PythonCommand(CommandBase.Command):
         self.thread = None
         self.alive = True
         self.postProcess = None
-        self.Line = Line_Notify()
         self.message_dialogue = None
 
         self._logger = getLogger(__name__)
@@ -199,8 +199,26 @@ class PythonCommand(CommandBase.Command):
         self.press(Button.HOME, wait=1)
 
     def LINE_text(self, txt="", token='token'):
-        self.Line.send_text(txt, token)
+        try:
+            token_ = load_tokens(logger=self._logger)[token]
+        
+        except:
+            print('token名が間違っています')
+            self._logger.error('Using the wrong token')
+            return
+        
+        try:
+            service = ln.Service(token_)
+            service.notify(txt)
 
+        except:
+            print(f"[LINE]テキストの送信に失敗しました。")
+            self._logger.error(f"Failed to send text")
+            return
+        
+        print(f"[LINE]テキストを送信しました。")
+        self._logger.info(f"Send text")
+        
     # direct serial
     def direct_serial(self, serialcommands: list, waittime: list):
         # 余計なものが付いている可能性があるので確認して削除する
@@ -309,7 +327,6 @@ class ImageProcPythonCommand(PythonCommand):
         self._logger.propagate = True
 
         self.camera = cam
-        self.Line = Line_Notify(self.camera)
 
         self.gui = gui
 
@@ -460,7 +477,29 @@ class ImageProcPythonCommand(PythonCommand):
 
     def LINE_image(self, txt="", token='token'):
         try:
-            self.Line.send_text_n_image(txt, token)
+            img = self.camera.readFrame()
         except:
-            pass
+            print("Camera is not Opened. Send text only.")
+            self.LINE_text(txt, token)
+            return
 
+        try:
+            token_ = load_tokens(logger=self._logger)[token]
+        
+        except:
+            print('token名が間違っています')
+            self._logger.error('Using the wrong token')
+            return
+        
+        try:
+            service = ln.Service(token_)
+            service.notify(txt, img)
+
+        except:
+            print(f"[LINE]テキストと画像の送信に失敗しました。")
+            self._logger.error(f"Failed to send image with text")
+            return
+        
+        print(f"[LINE]テキストと画像を送信しました。")
+        self._logger.info(f"Send image with text")
+        
