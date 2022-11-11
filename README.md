@@ -104,6 +104,7 @@ pygubu
 requests
 pandas
 numpy
+linenotify-python
 ```
 
 ## おまけ
