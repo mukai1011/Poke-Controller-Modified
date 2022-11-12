@@ -5,7 +5,7 @@ from KeyConfig import PokeKeycon
 from get_pokestatistics import GetFromHomeGUI
 from logging import getLogger, DEBUG, NullHandler
 
-from line_token import check_tokens, get_rate_limit, load_tokens
+from LineNotify import LineNotify
 
 
 class PokeController_Menubar(tk.Menu):
@@ -69,9 +69,9 @@ class PokeController_Menubar(tk.Menu):
 
     def LineTokenSetting(self):
         self._logger.debug("Show line API")
-        tokens = load_tokens(logger=self._logger)
-        print(check_tokens(tokens, self._logger))
-        get_rate_limit(tokens, self._logger)
+        line = LineNotify()
+        print(line.check_tokens() + "\n")
+        line.get_rate_limit()
         # LINE.send_text_n_image("CAPTURE")
 
     def OpenKeyConfig(self):

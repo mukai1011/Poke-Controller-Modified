@@ -15,9 +15,8 @@ import tkinter.ttk as ttk
 import Settings
 from . import CommandBase
 from .Keys import Button, Direction, KeyPress
-from line_token import load_tokens
+from LineNotify import LineNotify
 
-import linenotify as ln
 import numpy as np
 
 
@@ -199,19 +198,7 @@ class PythonCommand(CommandBase.Command):
         self.press(Button.HOME, wait=1)
 
     def LINE_text(self, txt="", token='token'):
-        try:
-            ln.Service(load_tokens(logger=self._logger)[token]).notify(txt)
-        except KeyError:
-            print('token名が間違っています')
-            self._logger.error('Using the wrong token')
-            return
-        except:
-            print("[LINE]テキストの送信に失敗しました。")
-            self._logger.error(f"Failed to send text")
-            return
-
-        print(f"[LINE]テキストを送信しました。")
-        self._logger.info(f"Send text")
+        LineNotify().notify(token, txt)
         
     # direct serial
     def direct_serial(self, serialcommands: list, waittime: list):
@@ -477,17 +464,5 @@ class ImageProcPythonCommand(PythonCommand):
             self.LINE_text(txt, token)
             return
 
-        try:
-            ln.Service(load_tokens(logger=self._logger)[token]).notify(txt, img)
-        except KeyError:
-            print('token名が間違っています')
-            self._logger.error('Using the wrong token')
-            return
-        except:
-            print("[LINE]テキストと画像の送信に失敗しました。")
-            self._logger.error(f"Failed to send image with text")
-            return
-
-        print(f"[LINE]テキストと画像を送信しました。")
-        self._logger.info(f"Send image with text")
+        LineNotify().notify(token, txt, img)
         
