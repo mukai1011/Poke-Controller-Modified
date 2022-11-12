@@ -4,43 +4,7 @@ from configparser import ConfigParser
 from logging import Logger
 from os import path
 
-import cv2
 import linenotify as ln
-
-
-def notify(key: str, message: str, attachment: cv2.Mat | None = None, logger: Logger | None = None):
-    """
-    keyを指定して送信する。
-
-    Args:
-        key (str): トークンの辞書のkey
-        message (str): 送信するテキスト
-        attachment (cv2.Mat | None, optional): 添付する画像。Defaults to None.
-        logger (Logger | None, optional): `Logger`オブジェクト。Defaults to None.
-    """
-    try:
-        token = load_tokens(logger=logger)[key]
-
-    except:
-        print('token名が間違っています')
-        if logger is not None:
-            logger.error('Using the wrong token')
-        return
-
-    a = attachment is None
-    try:
-        service = ln.Service(token)
-        service.notify(message, attachment)
-
-    except:
-        print(f"[LINE]テキスト{'' if a else 'と画像'}の送信に失敗しました。")
-        if logger is not None:
-            logger.error(f"Failed to send {'' if a else 'image with '}text")
-        return
-
-    print(f"[LINE]テキスト{'' if a else 'と画像'}を送信しました。")
-    if logger is not None:
-        logger.info(f"Send {'' if a else 'image with '}text")
 
 
 def _get_encoding(filename):
