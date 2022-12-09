@@ -58,6 +58,7 @@ class Line_Notify:
             elif stat == 200:
                 self._logger.info("Valid token")
                 return "LINE-Token Check OK!"
+        return ""
 
     def send_text(self, notification_message, token='token'):
         """
@@ -129,6 +130,8 @@ class Line_Notify:
                 self._logger.info(f"LINE API - ImageLimit: {self.res[i].headers['X-RateLimit-Limit']}")
                 self._logger.info(f"LINE API - ImageRemaining: {self.res[i].headers['X-RateLimit-ImageRemaining']}")
                 self._logger.info(f"Reset time: {dt}")
+        except IndexError as e:
+            self._logger.error(e)
         except AttributeError as e:
             self._logger.error(e)
             pass
