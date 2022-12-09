@@ -24,7 +24,10 @@ class Line_Notify:
         self.token_num = len(self.token_list)
         # self.line_notify_token = self.token_file['LINE'][token_name]
         self.headers = [{'Authorization': f'Bearer {token}'} for key, token in self.token_list.items()]
-        self.res = [requests.get('https://notify-api.line.me/api/status', headers=head) for head in self.headers]
+        try:
+            self.res = [requests.get('https://notify-api.line.me/api/status', headers=head) for head in self.headers]
+        except requests.exceptions.RequestException:
+            self.res = []
         self.status = [responses.status_code for responses in self.res]
         self.chk_token_json = [responses.json() for responses in self.res]
 
