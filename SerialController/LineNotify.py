@@ -134,10 +134,8 @@ class Line_Notify:
             self._logger.error(e)
         except AttributeError as e:
             self._logger.error(e)
-            pass
         except KeyError as e:
             self._logger.error(e)
-            pass
 
 
 if __name__ == "__main__":
