@@ -16,7 +16,6 @@ class Line_Notify:
         self._logger.setLevel(DEBUG)
         self._logger.propagate = True
 
-        self.res = None
         self.token_file = configparser.ConfigParser(comment_prefixes='#', allow_no_value=True)
         self.open_file_with_utf8()
         self.camera = camera
