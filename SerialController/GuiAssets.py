@@ -14,7 +14,7 @@ from PIL import Image, ImageTk
 
 from Commands import UnitCommand
 from Commands import StickCommand
-from Commands.Keys import Direction, Stick, Button, Direction, KeyPress
+from Commands.Keys import Direction, Stick, Button, Direction, NEUTRAL, KeyPress
 
 import logging
 from logging import INFO, StreamHandler, getLogger, DEBUG, NullHandler
@@ -308,7 +308,7 @@ class CaptureArea(tk.Canvas):
 
     def mouseLeftRelease(self, ser):
         self.config(cursor='tcross')
-        self.ser.input([Direction(Stick.LEFT, (128, 127)), Direction(Stick.RIGHT, (128, 127))])
+        self.ser.input(Direction(Stick.LEFT, NEUTRAL))
         self.delete("lcircle")
         self.delete("lcircle2")
         if self.master.is_use_right_stick_mouse.get():
@@ -383,7 +383,7 @@ class CaptureArea(tk.Canvas):
 
     def mouseRightRelease(self, ser):
         self.config(cursor='tcross')
-        self.ser.input([Direction(Stick.LEFT, (128, 127)), Direction(Stick.RIGHT, (128, 127))])
+        self.ser.input(Direction(Stick.RIGHT, NEUTRAL))
         self.delete("rcircle")
         self.delete("rcircle2")
         if self.master.is_use_left_stick_mouse.get():

@@ -261,6 +261,12 @@ class Direction:
                 tilting.append(Tilt.R_UP)
         return tilting
 
+NEUTRAL = (128, 127)
+"""
+スティックが中心にあることを表します。
+
+丸め誤差の関係で"80 80"になるのは`(128, 127)`です。
+"""
 
 # Left stick for ease of use
 Direction.UP = Direction(Stick.LEFT, 90, showName='UP')
