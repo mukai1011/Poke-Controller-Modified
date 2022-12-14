@@ -285,19 +285,13 @@ class CaptureArea(tk.Canvas):
                 #                             args=(langle,),
                 #                             kwargs={'r': mag, 'duration': _time - self.calc_time})
                 # thread_1.start()
-                self.ser.input(Direction(Stick.LEFT, (
-                    int(128 + mag * 127.5 * np.cos(np.deg2rad(langle))),
-                    int(128 - mag * 127.5 * np.sin(np.deg2rad(langle)))
-                )))
+                self.ser.input(Direction(Stick.LEFT, langle))
                 self.dq.append([langle,
                                 mag,
                                 _time - self.calc_time])
                 self.calc_time = _time
         elif not isTakeLog:
-            self.ser.input(Direction(Stick.LEFT, (
-                int(128 + mag * 127.5 * np.cos(np.deg2rad(langle))),
-                int(128 - mag * 127.5 * np.sin(np.deg2rad(langle)))
-            )))
+            self.ser.input(Direction(Stick.LEFT, langle))
 
         if mag >= 1:
             center_x = (self.radius + self.radius // 11) * np.cos(np.deg2rad(langle))
@@ -374,17 +368,11 @@ class CaptureArea(tk.Canvas):
                 #                             kwargs={'r': mag, 'duration': _time - self.calc_time})
                 # thread_1.start()
                 # self.RStick.RStick(rangle, r=mag)
-                self.ser.input(Direction(Stick.RIGHT, (
-                    int(128 + mag * 127.5 * np.cos(np.deg2rad(rangle))),
-                    int(128 - mag * 127.5 * np.sin(np.deg2rad(rangle)))
-                )))
+                self.ser.input(Direction(Stick.RIGHT, rangle))
                 self.dq.append([rangle, mag, _time - self.calc_time])
                 self.calc_time = _time
         elif not isTakeLog:
-            self.ser.input(Direction(Stick.RIGHT, (
-                int(128 + mag * 127.5 * np.cos(np.deg2rad(rangle))),
-                int(128 - mag * 127.5 * np.sin(np.deg2rad(rangle)))
-            )))
+            self.ser.input(Direction(Stick.RIGHT, rangle))
         if mag >= 1:
             center_x = (self.radius + self.radius // 11) * np.cos(np.deg2rad(rangle))
             center_y = (self.radius + self.radius // 11) * np.sin(np.deg2rad(rangle))
