@@ -281,10 +281,6 @@ class CaptureArea(tk.Canvas):
         if (self._langle and self._lmag) is not None and isTakeLog:
             _time = time.perf_counter()
             if _time - self.calc_time > 0.05:
-                # thread_1 = threading.Thread(target=self.LStick.LStick,
-                #                             args=(langle,),
-                #                             kwargs={'r': mag, 'duration': _time - self.calc_time})
-                # thread_1.start()
                 self.ser.input(Direction(Stick.LEFT, langle))
                 self.dq.append([langle,
                                 mag,
@@ -363,11 +359,6 @@ class CaptureArea(tk.Canvas):
         if (self._langle and self._lmag) is not None and isTakeLog:
             _time = time.perf_counter()
             if _time - self.calc_time > 0.05:
-                # thread_1 = threading.Thread(target=self.RStick.RStick,
-                #                             args=(rangle,),
-                #                             kwargs={'r': mag, 'duration': _time - self.calc_time})
-                # thread_1.start()
-                # self.RStick.RStick(rangle, r=mag)
                 self.ser.input(Direction(Stick.RIGHT, rangle))
                 self.dq.append([rangle, mag, _time - self.calc_time])
                 self.calc_time = _time
