@@ -283,7 +283,7 @@ class CaptureArea(tk.Canvas):
             if _time - self.calc_time > 0.05:
                 self.ser.input(Direction(Stick.LEFT, (
                     int(128 + mag * 127.5 * np.cos(np.deg2rad(langle))),
-                    int(128 - mag * 127.5 * np.sin(np.deg2rad(langle)))
+                    255 - int(128 - mag * 127.5 * np.sin(np.deg2rad(langle)))
                 )))
                 self.dq.append([langle,
                                 mag,
@@ -292,7 +292,7 @@ class CaptureArea(tk.Canvas):
         elif not isTakeLog:
             self.ser.input(Direction(Stick.LEFT, (
                 int(128 + mag * 127.5 * np.cos(np.deg2rad(langle))),
-                int(128 - mag * 127.5 * np.sin(np.deg2rad(langle)))
+                255 - int(128 - mag * 127.5 * np.sin(np.deg2rad(langle)))
             )))
 
         if mag >= 1:
@@ -367,14 +367,14 @@ class CaptureArea(tk.Canvas):
             if _time - self.calc_time > 0.05:
                 self.ser.input(Direction(Stick.RIGHT, (
                     int(128 + mag * 127.5 * np.cos(np.deg2rad(rangle))),
-                    int(128 - mag * 127.5 * np.sin(np.deg2rad(rangle)))
+                    255 - int(128 - mag * 127.5 * np.sin(np.deg2rad(rangle)))
                 )))
                 self.dq.append([rangle, mag, _time - self.calc_time])
                 self.calc_time = _time
         elif not isTakeLog:
             self.ser.input(Direction(Stick.RIGHT, (
                 int(128 + mag * 127.5 * np.cos(np.deg2rad(rangle))),
-                int(128 - mag * 127.5 * np.sin(np.deg2rad(rangle)))
+                255 - int(128 - mag * 127.5 * np.sin(np.deg2rad(rangle)))
             )))
         if mag >= 1:
             center_x = (self.radius + self.radius // 11) * np.cos(np.deg2rad(rangle))
