@@ -321,7 +321,7 @@ class PokeControllerApp:
         self.preview = CaptureArea(self.camera,
                                    self.fps.get(),
                                    self.is_show_realtime,
-                                   self.ser,
+                                   KeyPress(self.ser),
                                    self.camera_lf,
                                    *list(map(int, self.show_size.get().split("x")))
                                    )
