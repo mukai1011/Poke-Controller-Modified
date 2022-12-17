@@ -20,6 +20,19 @@ from GuiAssets import CaptureArea, ControllerGUI
 from Keyboard import SwitchKeyboardController
 from Menubar import PokeController_Menubar
 
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
+#=#=#=#=#= AUTO-GENERATED #=#=#=#=#=#
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
+import pathlib
+import tkinter as tk
+import pygubu
+PROJECT_PATH = pathlib.Path(__file__).parent
+PROJECT_UI = PROJECT_PATH / "poke_controller.ui"
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
+#=#=#=#=#= /AUTO-GENERATED =#=#=#=#=#
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
+from typing import cast
+
 # from get_pokestatistics import GetFromHomeGUI
 
 NAME = "Poke-Controller"
@@ -56,219 +69,63 @@ class PokeControllerApp:
 
         self.camera_dic = None
 
-        '''
-        ここから
-        '''
-        # build ui
-        self.frame_1 = ttk.Frame(master)
-        self.camera_lf = ttk.Labelframe(self.frame_1)
-        self.label_1 = ttk.Label(self.camera_lf)
-        self.label_1.config(anchor='center', text='Camera ID:')
-        self.label_1.grid(padx='5', sticky='ew')
-        self.camera_entry = ttk.Entry(self.camera_lf)
+        #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
+        #=#=#=#=#= AUTO-GENERATED #=#=#=#=#=#
+        #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
+        self.builder = builder = pygubu.Builder()
+        builder.add_resource_path(PROJECT_PATH)
+        builder.add_from_file(PROJECT_UI)
+        # Main widget
+        self.mainwindow = cast(ttk.Frame, builder.get_object("frame_1", master))
+
         self.camera_id = tk.IntVar()
-        self.camera_entry.config(state='normal', textvariable=self.camera_id)
-        self.camera_entry.grid(column='1', padx='5', row='0', sticky='ew')
-        self.camera_entry.columnconfigure('1', uniform='0')
-        self.reloadButton = ttk.Button(self.camera_lf)
-        self.reloadButton.config(text='Reload Camera')
-        self.reloadButton.grid(column='2', padx='5', row='0', sticky='ew')
-        self.reloadButton.configure(command=self.openCamera)
-        self.separator_1 = ttk.Separator(self.camera_lf)
-        self.separator_1.config(orient='vertical')
-        self.separator_1.grid(column='3', row='0', sticky='ns')
-        self.cb1 = ttk.Checkbutton(self.camera_lf)
         self.is_show_realtime = tk.BooleanVar()
-        self.cb1.config(text='Show Realtime', variable=self.is_show_realtime)
-        self.cb1.grid(column='4', row='0')
-        self.separator_2 = ttk.Separator(self.camera_lf)
-        self.separator_2.config(orient='vertical')
-        self.separator_2.grid(column='5', row='0', sticky='ns')
-        self.capture_f = ttk.Frame(self.camera_lf)
-        self.captureButton = ttk.Button(self.capture_f)
-        self.captureButton.config(text='Capture')
-        self.captureButton.grid(column='0', row='0')
-        self.captureButton.configure(command=self.saveCapture)
-        self.open_folder_img = tk.PhotoImage(file="./assets/icons8-OpenDir-16.png")
-        # self.bg = self.bg.subsample(3, 3)
-        self.OpencaptureButton = ttk.Button(self.capture_f)
-        self.OpencaptureButton.config(image=self.open_folder_img)
-        self.OpencaptureButton.grid(column='1', row='0')
-        self.OpencaptureButton.configure(command=self.OpenCaptureDir)
-
-        self.capture_f.grid(column='6', row='0', sticky='ns')
-        self.camera_f2 = ttk.Frame(self.camera_lf)
-        self.label3 = ttk.Label(self.camera_f2)
-        self.label3.config(text='FPS:')
-        self.label3.grid(padx='5', sticky='ew')
-        self.fps_cb = ttk.Combobox(self.camera_f2)
         self.fps = tk.StringVar()
-        self.fps_cb.config(justify='right', state='readonly', textvariable=self.fps, values=[60, 45, 30, 15, 5])
-        self.fps_cb.config(width='5')
-        self.fps_cb.grid(column='1', padx='10', row='0', sticky='ew')
-        self.fps_cb.bind('<<ComboboxSelected>>', self.applyFps, add='')
-        self.separator_3 = ttk.Separator(self.camera_f2)
-        self.separator_3.config(orient='vertical')
-        self.separator_3.grid(column='2', row='0', sticky='ns')
-        self.show_size_label = ttk.Label(self.camera_f2)
-        self.show_size_label.config(text='Show Size:')
-        self.show_size_label.grid(column='3', padx='5', row='0', sticky='ew')
-        self.show_size_cb = ttk.Combobox(self.camera_f2)
         self.show_size = tk.StringVar()
-        self.show_size_cb.config(textvariable=self.show_size, state='readonly', values='640x360 1280x720 1920x1080')
-        self.show_size_cb.grid(column='4', padx='10', row='0', sticky='ew')
-        self.show_size_cb.bind('<<ComboboxSelected>>', self.applyWindowSize, add='')
-        self.camera_f2.grid(column='0', columnspan='7', row='3', sticky='nsew')
-        self.camera_name_l = ttk.Label(self.camera_lf)
-        self.camera_name_l.config(anchor='center', text='Camera Name: ')
-        self.camera_name_l.grid(column='0', padx='5', row='1', sticky='ew')
-        self.Camera_Name = ttk.Combobox(self.camera_lf)
         self.camera_name_fromDLL = tk.StringVar()
-        self.Camera_Name.config(state='normal', textvariable=self.camera_name_fromDLL)
-        self.Camera_Name.grid(column='1', columnspan='6', padx='5', row='1', sticky='ew')
-        self.Camera_Name.bind('<<ComboboxSelected>>', self.set_cameraid, add='')
-        self.frame_1_2 = ttk.Frame(self.camera_lf)
-        self.frame_1_2.config(height='360', relief='groove', width='640')
-        self.frame_1_2.grid(column='0', columnspan='7', row='2')
-        self.camera_lf.config(height='200', text='Camera', width='200')
-        self.camera_lf.grid(columnspan='3', padx='5', sticky='ew')
-        self.serial_lf = ttk.Labelframe(self.frame_1)
-        self.label2 = ttk.Label(self.serial_lf)
-        self.label2.config(text='COM Port: ')
-        self.label2.grid(padx='5', sticky='ew')
-        self.label2.rowconfigure('0', uniform='None', weight='0')
-        self.entry2 = ttk.Entry(self.serial_lf)
-        self.com_port = tk.IntVar()
-        self.com_port_name = tk.StringVar()
-        self.entry2.config(textvariable=self.com_port, width='5')
-        self.entry2.grid(column='1', padx='5', row='0', sticky='ew')
-        self.entry2.rowconfigure('0', uniform='None', weight='0')
-
-        self.baud_rate_label = ttk.Label(self.serial_lf)
-        self.baud_rate_label.config(text='Baud Rate: ')
-        self.baud_rate_label.grid(column='2', padx='5', row='0', sticky='ew')
-
-        self.baud_rate_cb = ttk.Combobox(self.serial_lf)
+        self.com_port = tk.StringVar()
         self.baud_rate = tk.StringVar()
-        self.baud_rate_cb.config(justify='right', state='readonly', textvariable=self.baud_rate, values=[9600, 4800])
-        self.baud_rate_cb.config(width='6')
-        self.baud_rate_cb.grid(column='3', padx='5', row='0', sticky='ew')
-        self.baud_rate_cb.bind('<<ComboboxSelected>>', self.applyBaudRate, add='')
-
-        self.reloadComPort = ttk.Button(self.serial_lf)
-        self.reloadComPort.config(text='Reload Port')
-        self.reloadComPort.grid(column='4', padx='5', row='0')
-        self.reloadComPort.rowconfigure('0', uniform='None', weight='0')
-        self.reloadComPort.configure(command=self.activateSerial)
-
-        self.disconnectComPort = ttk.Button(self.serial_lf)
-        self.disconnectComPort.config(text='Disconnect Port')
-        self.disconnectComPort.grid(column='5', padx='5', row='0')
-        self.disconnectComPort.rowconfigure('0', uniform='None', weight='0')
-        self.disconnectComPort.configure(command=self.inactivateSerial)
-
-        self.separator_4 = ttk.Separator(self.serial_lf)
-        self.separator_4.config(orient='vertical')
-        self.separator_4.grid(column='6', padx='5', row='0', sticky='ns')
-        self.separator_4.rowconfigure('0', uniform='None', weight='0')
-        self.separator_4.columnconfigure('3', uniform='None', weight='0')
-        self.checkbutton_2 = ttk.Checkbutton(self.serial_lf)
         self.is_show_serial = tk.BooleanVar()
-        self.checkbutton_2.config(text='Show Serial', variable=self.is_show_serial)
-        self.checkbutton_2.grid(column='7', columnspan='2', padx='5', row='0', sticky='ew')
-        self.checkbutton_2.rowconfigure('0', uniform='None', weight='0')
-        self.serial_lf.config(text='Serial Settings')
-        self.serial_lf.grid(column='0', columnspan='2', padx='5', row='1', sticky='nsew')
-        self.control_lf = ttk.Labelframe(self.frame_1)
-        self.cb_use_keyboard = ttk.Checkbutton(self.control_lf)
-        self.cb_left_stick_mouse = ttk.Checkbutton(self.control_lf)
-        self.cb_right_stick_mouse = ttk.Checkbutton(self.control_lf)
         self.is_use_keyboard = tk.BooleanVar()
-        self.camera_lf.is_use_left_stick_mouse = tk.BooleanVar()
-        self.camera_lf.is_use_right_stick_mouse = tk.BooleanVar()
-        self.cb_use_keyboard.config(text='Use Keyboard', variable=self.is_use_keyboard)
-        self.cb_use_keyboard.grid(column='0', padx='10', pady='5', sticky='ew')
-        self.cb_use_keyboard.rowconfigure('0', weight='1')
-        self.cb_use_keyboard.columnconfigure('0', weight='1')
-        self.cb_use_keyboard.configure(command=self.activateKeyboard)
-        self.cb_left_stick_mouse.config(text='Use LStick Mouse', variable=self.camera_lf.is_use_left_stick_mouse)
-        self.cb_left_stick_mouse.grid(column='1', row='0', padx='10', pady='5', sticky='ew')
-        self.cb_left_stick_mouse.rowconfigure('0', weight='1')
-        self.cb_left_stick_mouse.columnconfigure('0', weight='1')
-        self.cb_left_stick_mouse.configure(command=self.activate_Left_stick_mouse)
-        self.cb_right_stick_mouse.config(text='Use RStick Mouse', variable=self.camera_lf.is_use_right_stick_mouse)
-        self.cb_right_stick_mouse.grid(column='1', row='1', padx='10', pady='5', sticky='ew')
-        self.cb_right_stick_mouse.rowconfigure('0', weight='1')
-        self.cb_right_stick_mouse.columnconfigure('0', weight='1')
-        self.cb_right_stick_mouse.configure(command=self.activate_Right_stick_mouse)
-        self.simpleConButton = ttk.Button(self.control_lf)
-        self.simpleConButton.config(text='Controller')
-        self.simpleConButton.grid(column='0', padx='10', pady='5', row='1', sticky='ew')
-        self.simpleConButton.rowconfigure('1', weight='1')
-        self.simpleConButton.columnconfigure('0', weight='1')
-        self.simpleConButton.configure(command=self.createControllerWindow)
-        self.control_lf.config(height='200', text='Controller')
-        # self.control_lf.grid(column='0', padx='5', row='2', sticky='nsew')
-        self.control_lf.grid(column='0', padx='5', row='2', columnspan='2', sticky='nsew')
-        # self.Poke_statistic_lf = ttk.Labelframe(self.frame_1)
-        # self.OpenPokeButton = ttk.Button(self.Poke_statistic_lf)
-        # self.OpenPokeButton.config(text='技統計')
-        # self.OpenPokeButton.grid(padx='10', pady='10', sticky='nsew')
-        # self.OpenPokeButton.rowconfigure('0', pad='0', uniform='1', weight='1')
-        # self.OpenPokeButton.columnconfigure('0', pad='0', uniform='1', weight='1')
-        # self.OpenPokeButton.configure(command=self.createGetFromHomeWindow)
-        # self.Poke_statistic_lf.config(height='200', text='PokemonHome連携', width='200')
-        # self.Poke_statistic_lf.grid(column='1', padx='5', row='2', sticky='nsew')
-        self.lf = ttk.Labelframe(self.frame_1)
-
-        self.Commands_f = ttk.Frame(self.lf)
-        self.Commands_2_f = ttk.Frame(self.lf)
-        self.Command_nb = ttk.Notebook(self.Commands_f)
-        self.py_cb = ttk.Combobox(self.Command_nb)
+        self.is_use_left_stick_mouse = tk.BooleanVar()
+        self.is_use_right_stick_mouse = tk.BooleanVar()
         self.py_name = tk.StringVar()
-        self.py_cb.config(state='readonly', textvariable=self.py_name)
-        self.py_cb.pack(side='top')
-        self.Command_nb.add(self.py_cb, padding='5', text='Python Command')
-        self.mcu_cb = ttk.Combobox(self.Command_nb)
         self.mcu_name = tk.StringVar()
-        self.mcu_cb.config(state='readonly', textvariable=self.mcu_name)
-        self.mcu_cb.pack(side='top')
-        self.Command_nb.add(self.mcu_cb, padding='5', text='Mcu Command')
-        self.Command_nb.pack(fill="both", expand=True, padx='5', pady='5', side='left')
+        builder.import_variables(self,
+                                 ['camera_id',
+                                  'is_show_realtime',
+                                  'fps',
+                                  'show_size',
+                                  'camera_name_fromDLL',
+                                  'com_port',
+                                  'baud_rate',
+                                  'is_show_serial',
+                                  'is_use_keyboard',
+                                  'is_use_left_stick_mouse',
+                                  'is_use_right_stick_mouse',
+                                  'py_name',
+                                  'mcu_name'])
 
-        self.OpenCommandDirButton = ttk.Button(self.Commands_f)
-        self.OpenCommandDirButton.config(image=self.open_folder_img)
-        self.OpenCommandDirButton.pack(fill="y", expand=False, side='left', ipadx='5', pady='15')
-        self.OpenCommandDirButton.configure(command=self.OpenCommandDir)
-
-        self.reloadCommandButton = ttk.Button(self.Commands_2_f)
-        self.reloadCommandButton.config(text='Reload')
-        self.reloadCommandButton.grid(column='0', padx='5', pady='5', row='1', sticky='ew')
-        self.reloadCommandButton.configure(command=self.reloadCommands)
-        self.startButton = ttk.Button(self.Commands_2_f)
-        self.startButton.config(text='Start')
-        self.startButton.grid(column='1', padx='5', pady='5', row='1', sticky='ew')
-        self.startButton.configure(command=self.startPlay)
-
-        self.Commands_f.pack(fill="both", expand=True, padx='5', pady='5', anchor=tk.E, side='top')
-        self.Commands_2_f.pack(fill=None, expand=True, padx='5', pady='5', anchor=tk.E, side='top')
-        self.lf.config(height='200', text='Command')
-        self.lf.grid(column='2', padx='5', row='1', rowspan='2', sticky='nsew')
-        self.log_scroll = ScrollbarHelper(self.frame_1, scrolltype='both')
-        self.logArea = tk.Text(self.log_scroll.container)
-        self.logArea.config(blockcursor='true', height='10', insertunfocussed='none', maxundo='0')
-        self.logArea.config(relief='flat', state='disabled', undo='false', width='50')
-        self.logArea.pack(expand='true', fill='both', side='top')
-        self.log_scroll.add_child(self.logArea)
-        self.log_scroll.config(borderwidth='1', padding='1', relief='sunken')
-        # TODO - self.log_scroll: code for custom option 'usemousewheel' not implemented.
-        self.log_scroll.grid(column='3', padx='5', pady='5', row='0', rowspan='3', sticky='nsew')
-        self.frame_1.config(height='720', padding='5', relief='flat', width='1280')
-        self.frame_1.pack(expand='true', fill='both', side='top')
-        self.frame_1.columnconfigure('3', weight='1')
-        '''
-        ここまで
-        '''
+        builder.connect_callbacks(self)
+        #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
+        #=#=#=#=#= /AUTO-GENERATED =#=#=#=#=#
+        #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
+        # FIXME: Not using on GUI, declared anyway
+        self.com_port_name = tk.StringVar()
+        # FIXME: Monkey patch
+        self.frame_1_2 = cast(ttk.Frame, builder.get_object("frame_1_2", master))
+        self.logArea = cast(tk.Text, builder.get_object("logArea", master))
+        self.fps_cb = cast(ttk.Combobox, builder.get_object("fps_cb", master))
+        self.show_size_cb = cast(ttk.Combobox, builder.get_object("show_size_cb", master))
+        self.camera_entry = cast(ttk.Entry, builder.get_object("camera_entry", master))
+        self.Camera_Name = cast(ttk.Combobox, builder.get_object("Camera_Name", master))
+        self.cb_use_keyboard = cast(ttk.Combobox, builder.get_object("cb_use_keyboard", master))
+        self.camera_lf = cast(ttk.Labelframe, builder.get_object("camera_lf", master))
+        self.Command_nb = cast(ttk.Notebook, builder.get_object("Command_nb", master))
+        self.py_cb = cast(ttk.Combobox, builder.get_object("py_cb", master))
+        self.mcu_cb = cast(ttk.Combobox, builder.get_object("mcu_cb", master))
+        self.startButton = cast(ttk.Button, builder.get_object("startButton", master))
+        self.reloadCommandButton = cast(ttk.Button, builder.get_object("reloadCommandButton", master))
 
         # 仮置フレームを削除
         self.frame_1_2.destroy()
@@ -336,9 +193,6 @@ class PokeControllerApp:
         self._logger.debug("Bind F6 key to execute commands")
         self.root.bind('<Key-Escape>', self.StopCommandWithEsc)
         self._logger.debug("Bind Escape key to stop commands")
-
-        # Main widget
-        self.mainwindow = self.frame_1
 
         self.root.protocol("WM_DELETE_WINDOW", self.exit)
         self.preview.startCapture()
