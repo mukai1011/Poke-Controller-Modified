@@ -56,6 +56,9 @@
   <object class="tk.Toplevel" id="toplevel1">
     <property name="height">200</property>
     <property name="width">200</property>
+    <bind add="" handler="StopCommandWithEsc" sequence="&lt;Key-Escape&gt;" />
+    <bind add="" handler="ReloadCommandWithF5" sequence="&lt;Key-F5&gt;" />
+    <bind add="" handler="StartCommandWithF6" sequence="&lt;Key-F6&gt;" />
     <child>
       <object class="ttk.Frame" id="frame_1" named="True">
         <property name="height">720</property>

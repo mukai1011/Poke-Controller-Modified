@@ -7,8 +7,6 @@ from logging import StreamHandler, getLogger, DEBUG, NullHandler
 import subprocess
 import platform
 
-from pygubu.widgets.scrollbarhelper import ScrollbarHelper
-
 import Settings
 import Utility as util
 from Camera import Camera
@@ -192,17 +190,11 @@ class PokeControllerApp:
         self.loadCommands()
 
         self.show_size_tmp = self.show_size_cb['values'].index(self.show_size_cb.get())
-        self.mainwindow.bind('<Key-F5>', self.ReloadCommandWithF5)
-        self._logger.debug("Bind F5 key to reload commands")
-        self.mainwindow.bind('<Key-F6>', self.StartCommandWithF6)
-        self._logger.debug("Bind F6 key to execute commands")
-        self.mainwindow.bind('<Key-Escape>', self.StopCommandWithEsc)
-        self._logger.debug("Bind Escape key to stop commands")
 
         self.mainwindow.protocol("WM_DELETE_WINDOW", self.exit)
         self.preview.startCapture()
 
-        # FIXME: Monkey patch
+        # FIXME: Monkey patch - Menubar
         self.line = Line_Notify(self.camera)
         self.key_config = None
 
