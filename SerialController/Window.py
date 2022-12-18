@@ -18,7 +18,10 @@ import PokeConLogger
 from Commands.Keys import KeyPress
 from GuiAssets import CaptureArea, ControllerGUI
 from Keyboard import SwitchKeyboardController
-from Menubar import PokeController_Menubar
+
+from KeyConfig import PokeKeycon
+from LineNotify import Line_Notify
+from get_pokestatistics import GetFromHomeGUI
 
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
 #=#=#=#=#= AUTO-GENERATED #=#=#=#=#=#
@@ -59,8 +62,6 @@ class PokeControllerApp:
         self._logger.setLevel(DEBUG)
         self._logger.propagate = True
 
-        self.root = master
-        self.root.title(NAME + ' ' + VERSION)
         # self.root.resizable(0, 0)
         self.controller = None
         self.poke_treeview = None
@@ -76,7 +77,10 @@ class PokeControllerApp:
         builder.add_resource_path(PROJECT_PATH)
         builder.add_from_file(PROJECT_UI)
         # Main widget
-        self.mainwindow = cast(ttk.Frame, builder.get_object("frame_1", master))
+        self.mainwindow = cast(tk.Toplevel, builder.get_object("toplevel1", master))
+        # Main menu
+        _main_menu = builder.get_object("menubar", self.mainwindow)
+        self.mainwindow.configure(menu=_main_menu)
 
         self.camera_id = tk.IntVar()
         self.is_show_realtime = tk.BooleanVar()
@@ -110,6 +114,7 @@ class PokeControllerApp:
         #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
         #=#=#=#=#= /AUTO-GENERATED =#=#=#=#=#
         #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
+        self.mainwindow.title(NAME + ' ' + VERSION)
         # FIXME: Not using on GUI, declared anyway
         self.com_port_name = tk.StringVar()
         # FIXME: Monkey patch
@@ -187,20 +192,19 @@ class PokeControllerApp:
         self.loadCommands()
 
         self.show_size_tmp = self.show_size_cb['values'].index(self.show_size_cb.get())
-        self.root.bind('<Key-F5>', self.ReloadCommandWithF5)
+        self.mainwindow.bind('<Key-F5>', self.ReloadCommandWithF5)
         self._logger.debug("Bind F5 key to reload commands")
-        self.root.bind('<Key-F6>', self.StartCommandWithF6)
+        self.mainwindow.bind('<Key-F6>', self.StartCommandWithF6)
         self._logger.debug("Bind F6 key to execute commands")
-        self.root.bind('<Key-Escape>', self.StopCommandWithEsc)
+        self.mainwindow.bind('<Key-Escape>', self.StopCommandWithEsc)
         self._logger.debug("Bind Escape key to stop commands")
 
-        self.root.protocol("WM_DELETE_WINDOW", self.exit)
+        self.mainwindow.protocol("WM_DELETE_WINDOW", self.exit)
         self.preview.startCapture()
 
-        self.menu = PokeController_Menubar(self)
-        self.root.config(menu=self.menu)
-
-        # logging.debug(f'python version: {sys.version}')
+        # FIXME: Monkey patch
+        self.line = Line_Notify(self.camera)
+        self.key_config = None
 
     def openCamera(self):
         self.camera.openCamera(self.camera_id.get())
@@ -336,8 +340,8 @@ class PokeControllerApp:
             # bind focus
             if not is_windows:
                 return
-            self.root.bind("<FocusIn>", self.onFocusInController)
-            self.root.bind("<FocusOut>", self.onFocusOutController)
+            self.mainwindow.bind("<FocusIn>", self.onFocusInController)
+            self.mainwindow.bind("<FocusOut>", self.onFocusOutController)
 
         else:
             if not is_windows:
@@ -347,18 +351,18 @@ class PokeControllerApp:
                 self.keyboard.stop()
                 self.keyboard = None
 
-            self.root.bind("<FocusIn>", lambda _: None)
-            self.root.bind("<FocusOut>", lambda _: None)
+            self.mainwindow.bind("<FocusIn>", lambda _: None)
+            self.mainwindow.bind("<FocusOut>", lambda _: None)
 
     def onFocusInController(self, event):
         # enable Keyboard as controller
-        if event.widget == self.root and self.keyboard is None:
+        if event.widget == self.mainwindow and self.keyboard is None:
             self.keyboard = SwitchKeyboardController(self.keyPress)
             self.keyboard.listen()
 
     def onFocusOutController(self, event):
         # stop listening to keyboard events
-        if event.widget == self.root and not self.keyboard is None:
+        if event.widget == self.mainwindow and not self.keyboard is None:
             self.keyboard.stop()
             self.keyboard = None
 
@@ -367,7 +371,7 @@ class PokeControllerApp:
             self.controller.focus_force()
             return
 
-        window = ControllerGUI(self.root, self.ser)
+        window = ControllerGUI(self.mainwindow, self.ser)
         window.protocol("WM_DELETE_WINDOW", self.closingController)
         self.controller = window
 
@@ -502,7 +506,7 @@ class PokeControllerApp:
             self.camera.destroy()
             cv2.destroyAllWindows()
             self._logger.debug("Stop Poke Controller")
-            self.root.destroy()
+            self.mainwindow.destroy()
 
     def closingController(self):
         self.controller.destroy()
@@ -529,6 +533,67 @@ class PokeControllerApp:
     def StopCommandWithEsc(self, *event):
         if self.startButton["text"] == "Stop":
             self.stopPlay()
+
+    def OpenPokeHomeCoop(self):
+        self._logger.debug("Open Pokemon home cooperate window")
+        if self.poke_treeview is not None:
+            self.poke_treeview.focus_force()
+            return
+
+        window2 = GetFromHomeGUI(self.mainwindow, self.settings.season, self.settings.is_SingleBattle)
+        window2.protocol("WM_DELETE_WINDOW", self.closingGetFromHome)
+        self.poke_treeview = window2
+
+    def closingGetFromHome(self):
+        self._logger.debug("Close Pokemon home cooperate window")
+        self.poke_treeview.destroy()
+        self.poke_treeview = None
+
+    def LineTokenSetting(self):
+        self._logger.debug("Show line API")
+        if self.line is None:
+            self.line = Line_Notify(self.camera)
+        print(self.line)
+        self.line.getRateLimit()
+        # LINE.send_text_n_image("CAPTURE")
+
+    def OpenKeyConfig(self):
+        self._logger.debug("Open KeyConfig window")
+        if self.key_config is not None:
+            self.key_config.focus_force()
+            return
+
+        kc_window = PokeKeycon(self.mainwindow)
+        kc_window.protocol("WM_DELETE_WINDOW", self.closingKeyConfig)
+        self.key_config = kc_window
+
+    def closingKeyConfig(self):
+        self._logger.debug("Close KeyConfig window")
+        self.key_config.destroy()
+        self.key_config = None
+
+    def ResetWindowSize(self):
+        self._logger.debug("Reset window size")
+        self.preview.setShowsize(360, 640)
+        self.show_size_cb.current(0)
+
+    def exit_menu(self):
+        self._logger.debug("Close Menubar")
+        if self.ser.isOpened():
+            self.ser.closeSerial()
+            print("serial disconnected")
+
+        # stop listening to keyboard events
+        if self.keyboard is not None:
+            self.keyboard.stop()
+            self.keyboard = None
+
+        # save settings
+        self.settings.save()
+
+        self.camera.destroy()
+        cv2.destroyAllWindows()
+        self.mainwindow.destroy()
 
 
 class StdoutRedirector(object):
@@ -557,6 +622,5 @@ if __name__ == '__main__':
     logger = PokeConLogger.root_logger()
     # logger.info('The root logger is created.')
 
-    root = tk.Tk()
-    app = PokeControllerApp(root)
+    app = PokeControllerApp()
     app.run()
