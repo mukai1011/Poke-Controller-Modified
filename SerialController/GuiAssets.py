@@ -56,13 +56,16 @@ class MouseStick(PythonCommand):
 
 
 class CaptureArea(tk.Canvas):
-    def __init__(self, camera, fps, is_show, ser, master=None, show_width=640, show_height=360):
+    def __init__(self, camera, fps, is_show, ser, is_use_left_stick_mouse: tk.BooleanVar, is_use_right_stick_mouse: tk.BooleanVar, master=None, show_width=640, show_height=360):
         super().__init__(master, borderwidth=0, cursor='tcross', width=show_width, height=show_height)
 
         self._logger = getLogger(__name__)
         self._logger.addHandler(NullHandler())
         self._logger.setLevel(DEBUG)
         self._logger.propagate = True
+
+        self.is_use_left_stick_mouse = is_use_left_stick_mouse
+        self.is_use_right_stick_mouse = is_use_right_stick_mouse
 
         self.master = master
         self.radius = 60  # 描画する円の半径
@@ -130,22 +133,22 @@ class CaptureArea(tk.Canvas):
         self.im_ = self.create_image(0, 0, image=self.disabled_tk, anchor=tk.NW)
 
     def ApplyLStickMouse(self):
-        if self.master.is_use_left_stick_mouse.get():
+        if self.is_use_left_stick_mouse.get():
             self.BindLeftClick()
         else:
             self.UnbindLeftClick()
 
     def ApplyRStickMouse(self):
-        if self.master.is_use_right_stick_mouse.get():
+        if self.is_use_right_stick_mouse.get():
             self.BindRightClick()
         else:
             self.UnbindRightClick()
 
     def StartRangeSS(self, event):
         self.ss = self.camera.image_bgr
-        if self.master.is_use_left_stick_mouse.get():
+        if self.is_use_left_stick_mouse.get():
             self.UnbindLeftClick()
-        if self.master.is_use_right_stick_mouse.get():
+        if self.is_use_right_stick_mouse.get():
             self.UnbindRightClick()
 
         self.min_x, self.min_y = event.x, event.y
@@ -166,9 +169,9 @@ class CaptureArea(tk.Canvas):
                                                                                 int(self.min_x * ratio_x),
                                                                                 int(self.min_y * ratio_y)))
 
-        if self.master.is_use_left_stick_mouse.get():
+        if self.is_use_left_stick_mouse.get():
             self.BindLeftClick()
-        if self.master.is_use_right_stick_mouse.get():
+        if self.is_use_right_stick_mouse.get():
             self.BindRightClick()
 
     def MotionRangeSS(self, event):
@@ -206,9 +209,9 @@ class CaptureArea(tk.Canvas):
         t = 0
         self.after(250, self.delete('SelectArea'))
 
-        if self.master.is_use_left_stick_mouse.get():
+        if self.is_use_left_stick_mouse.get():
             self.BindLeftClick()
-        if self.master.is_use_right_stick_mouse.get():
+        if self.is_use_right_stick_mouse.get():
             self.BindRightClick()
 
     def setFps(self, fps):
@@ -226,7 +229,7 @@ class CaptureArea(tk.Canvas):
 
     def mouseCtrlLeftPress(self, event):
         _img = cv2.cvtColor(self.camera.image_bgr, cv2.COLOR_BGR2RGB)
-        if self.master.is_use_left_stick_mouse.get():
+        if self.is_use_left_stick_mouse.get():
             self.UnbindLeftClick()
         x, y = event.x, event.y
         ratio_x = float(self.camera.capture_size[0] / self.show_size[0])
@@ -239,11 +242,11 @@ class CaptureArea(tk.Canvas):
             'Mouse down: Show ({}, {}) / Capture ({}, {})'.format(x, y, int(x * ratio_x), int(y * ratio_y)))
 
     def mouseCtrlLeftRelease(self, event):
-        if self.master.is_use_left_stick_mouse.get():
+        if self.is_use_left_stick_mouse.get():
             self.BindLeftClick()
 
     def mouseLeftPress(self, event, ser):
-        if self.master.is_use_right_stick_mouse.get():
+        if self.is_use_right_stick_mouse.get():
             self.UnbindRightClick()
         self.config(cursor='dot')
         self.lx_init, self.ly_init = event.x, event.y
@@ -330,7 +333,7 @@ class CaptureArea(tk.Canvas):
         )
         self.delete("lcircle")
         self.delete("lcircle2")
-        if self.master.is_use_right_stick_mouse.get():
+        if self.is_use_right_stick_mouse.get():
             self.BindRightClick()
         # self.event_generate('<Motion>', warp=True, x=self.lx_init, y=self.ly_init)
         if isTakeLog:
@@ -341,7 +344,7 @@ class CaptureArea(tk.Canvas):
                 self.LSTICK_logger.debug(",".join(list(map(str, _))))
 
     def mouseRightPress(self, event, ser):
-        if self.master.is_use_left_stick_mouse.get():
+        if self.is_use_left_stick_mouse.get():
             self.UnbindLeftClick()
         self.config(cursor='dot')
         self.rx_init, self.ry_init = event.x, event.y
@@ -423,7 +426,7 @@ class CaptureArea(tk.Canvas):
         )
         self.delete("rcircle")
         self.delete("rcircle2")
-        if self.master.is_use_left_stick_mouse.get():
+        if self.is_use_left_stick_mouse.get():
             self.BindLeftClick()
 
         # self.event_generate('<Motion>', warp=True, x=self.rx_init, y=self.ry_init)

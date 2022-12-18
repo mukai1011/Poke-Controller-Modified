@@ -182,6 +182,8 @@ class PokeControllerApp:
                                    self.fps.get(),
                                    self.is_show_realtime,
                                    self.ser,
+                                   self.is_use_left_stick_mouse,
+                                   self.is_use_right_stick_mouse,
                                    self.camera_lf,
                                    *list(map(int, self.show_size.get().split("x")))
                                    )

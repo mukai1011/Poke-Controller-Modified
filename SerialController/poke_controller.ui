@@ -242,6 +242,7 @@
                     <property name="state">readonly</property>
                     <property name="textvariable">string:show_size</property>
                     <property name="values">640x360 1280x720 1920x1080</property>
+                    <bind add="" handler="applyWindowSize" sequence="&lt;&lt;ComboboxSelected&gt;&gt;" />
                     <layout manager="grid">
                       <property name="column">4</property>
                       <property name="padx">10</property>
