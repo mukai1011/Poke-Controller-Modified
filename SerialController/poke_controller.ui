@@ -70,6 +70,9 @@
           <property name="fill">both</property>
           <property name="side">top</property>
         </layout>
+        <containerlayout manager="grid">
+          <property id="3" name="weight" type="col">1</property>
+        </containerlayout>
         <child>
           <object class="ttk.Labelframe" id="camera_lf" named="True">
             <property name="height">200</property>
